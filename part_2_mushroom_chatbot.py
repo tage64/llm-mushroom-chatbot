@@ -3,10 +3,10 @@
 import gradio as gr
 import random
 
-def response(inputs, history):
-    if "hello" in inputs["text"].lower():
+def response(input: str, history) -> str:
+    if "hello" in input.lower():
         return "Hello! I am a mushroom expert. Ask me anything about mushrooms."
-    elif "bye" in inputs["text"].lower():
+    elif "bye" in input.lower():
         return "Goodbye! Have a great day."
     else:
         return random.choice([
