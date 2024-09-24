@@ -43,11 +43,12 @@ class Chat:
             system_instruction="Act as a mushroom expert talking to a beginner interested in mushrooms.\n"
             "We are in Sweden.\n"
             "Be short and concise.\n"
-            "You are only allowed to talk about mushrooms.\n"
+            "But be very engaging and emotional.\n"
+            "You are only allowed to talk about mushrooms.\n",
         )
         self.chat = model.start_chat()
 
-    def response(self, input: str | dict[str, str | list], _history: list = []) -> Generator[str]:
+    def response(self, input: str | dict[str, str | list]) -> Generator[str]:
         """Given an input from the user, stream the response from the chatbot."""
         text = input if isinstance(input, str) else input["text"]
         assert isinstance(text, str)
@@ -55,7 +56,7 @@ class Chat:
         assert isinstance(files, list)
         for file in files:
             if file["mime_type"].lower().startswith("image/"):
-                yield self.process_img(file["path"])
+                yield self.process_img(file["path"]) + "\n\n"
 
         for response in self.chat.send_message(
             [text],
@@ -117,15 +118,22 @@ class Chat:
             f"With confidence {specs.confidence}, the picture shows a {specs.color} "
             f"{specs.common_name} mushroom, of genus {specs.genus}.  "
             f"The visible parts are: {", ".join(specs.visible)}.  "
-            f"The mushroom is {"" if specs.edible else "not"} edible."
+            f"The mushroom is {"" if specs.edible else "not"} edible.\n"
         )
+
+    def response_gradio(self, input: str | dict[str, str | list], _history) -> Generator[str]:
+        """Same as the response method but tayloured for gradio."""
+        text = ""
+        for resp in self.response(input):
+            text += resp
+            yield text
 
 
 if __name__ == "__main__":
     with gr.Blocks(fill_height=True) as demo:
         chat = Chat()
         chatbot = gr.ChatInterface(
-            fn=chat.response,
+            fn=chat.response_gradio,
             title="🍄 Your Personal Mushroom Expert 🍄‍🟫",
             multimodal=True,
         )
