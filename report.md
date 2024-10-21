@@ -1,18 +1,18 @@
 ## Assessment
 
 The model is not very capable of classifying mushrooms. It does misclassify most pictures of
-mushrooms. The reason for this is not very clear, but a further improvement might be to write a more
-advanced prompt which asks the chat bot to motivate what parts of the picture contribute to the type
-of mushroom.
+mushrooms. The reason for this is probably that the chatbot is trained on human tasks and not on
+foraging.
 
 In particular, the picture of a deadly webcap is assessed as a red-cracked bolete. The chat bot
 thinks that it is edible and tasty while the actual mushroom on the picture is extremly poisonous.
 
-## Inconsistent Predictions
+## Inconsistent Predictions (Q2)
 
 By setting the temperature to 0.0 the response **should** be deterministic with respect to the input
-prompt. However, if the query is processed on a central server which processes multiple queries in
-parallel, the padding might be different from time to time causing differing responses.
+prompt. However the history still affects the output, so an answer to the same question might still
+differ between conversations. Also, setting the `top_k` parameter to a low value might improve the
+reproducability.
 
 ## Talk about Another Topic
 
@@ -31,7 +31,6 @@ only use standard phrases about swedish mushrooms and didn't really answered my 
 didn't become very useful in this case.
 
 ## Transcribing Text on a Picture
-
 
 The chat bot made a good job of transcribing the text on page 226 from "Nya Svampboken". There were
 some minor errors though. In particular some words were missing or miss interpretted, nevertheless,
@@ -61,6 +60,29 @@ edible. The bot answered as follows:
 
 So it seems tricky to force Gemini to provide the information that Amanita Muscaria  can be eaten if
 prepaired correctly, and it seems very difficult to get the information how it should be prepaired.
+
+## The JSON response (Q6)
+
+The JSON responses are good in the sence of well formed JSON. The JSON is valid and the fields are
+correctly filled. The summaries and JSON responses agrees with each other, but the summaries and
+responses per se are not accurate at all. It for instance classifies the deadly webcap with a 90 %
+confidence to be an edible brown honey mushroom, and talks about it being delicious.
+
+## Quality of Answers (Q7)
+
+The quality is quite bad and sometimes even dangerous. I tried with two models: "gemini-1.5-flash"
+and "gemini-1.5-pro-exp-0827". Both misclassified 3 out of 4 mushrooms. Only the parasol mushroom
+was correctly classified.
+
+The gemini-1.5-pro could at least classify if the mushrooms were edible or not, but gemini-1.5-flash
+claims that poisonous mushrooms are edible. For instance, given the picture of a deadly webcap, it
+claims with a 90 % confidence that it is a tasty leccinum:
+> Leccinum! A true delight of the Swedish forests. They pop up like little gems amongst the fallen
+> leaves. See how the cap is a rich, deep brown? And the stem, so sturdy and strong! This is a
+> classic Swedish mushroom, and you'll know you've found a real treasure when you spot one of these.
+
+So it seems that the chatbot is really bad at classifying mushrooms and I would not recommend anyone
+to use it to determine the edibility of a mushroom.
 
 ## More Engaging
 
